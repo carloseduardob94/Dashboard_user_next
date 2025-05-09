@@ -1,17 +1,23 @@
 import { Bell, HelpCircle, PanelLeftClose } from "lucide-react";
-import Sidebar from "./sidebar";
 import HeaderIcon from "./header-icons";
 import Image from "next/image";
 
-export default function Header() {
+interface HeaderProps {
+  onToggleSidebar: () => void;
+}
+
+export default function Header({ onToggleSidebar }: HeaderProps) {
   const headerIcons = [
     { icon: HelpCircle },
     { icon: Bell }
   ]
   return (
-    <header className="w-full flex border-b border-border h-[69px]">
+    <header className="w-full flex border-b border-border h-[72px]">
       <div className="flex-1 flex items-center pl-7 pr-4">
-        <PanelLeftClose className="w-4 h-4" />
+        <button onClick={onToggleSidebar} className="w-4 h-4">
+          <PanelLeftClose className="w-4 h-4" />
+
+        </button>
 
         <div className="ml-auto flex items-center justify-center gap-3">
           {headerIcons.map((item, index) => (
