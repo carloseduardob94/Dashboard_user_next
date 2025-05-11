@@ -16,7 +16,7 @@ const Sidebar = ({ collapsed }: SidebarProps) => {
   ];
 
   return (
-    <aside className={`border-r border-border h-screen flex flex-col bg-muted/40 transition-all duration-300 ${collapsed ? "w-16" : "w-60"} font-inter`}>
+    <aside className={`border-r border-border flex flex-col bg-muted/40 transition-all duration-300 ${collapsed ? "w-16" : "w-60"} font-inter`}>
 
       <div className={`h-[72px] border-b border-border pt-6`}>
         {!collapsed ? (

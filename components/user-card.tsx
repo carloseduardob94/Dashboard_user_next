@@ -5,10 +5,10 @@ interface UserCardProps {
   name: string;
   age: number;
   gender: string;
-  date: string;        // Ex: "22/03/2025"
-  time: string;        // Ex: "10:21am"
-  duration: string;    // Ex: "38m22s"
-  userType: string;    // Ex: "Usuário padrão"
+  date: string;
+  time: string;
+  duration: string;
+  userType: string;
   status: string;
 }
 
@@ -45,7 +45,7 @@ export default function UserCard({
               {age} anos, {gender}
             </p>
           </div>
-          <p className="text-xs text-muted-foreground flex items-center gap-3">
+          <div className="text-xs text-muted-foreground flex items-center gap-3">
             <span>{date} -</span>
             <span>{time} </span>
             <div className="flex items-center gap-1">
@@ -56,7 +56,7 @@ export default function UserCard({
               <Tag className="w-3 h-3" />
               <span className="text-xs text-muted-foreground">{userType}</span>
             </div>
-          </p>
+          </div>
         </div>
       </div>
 

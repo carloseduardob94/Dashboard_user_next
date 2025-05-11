@@ -12,7 +12,7 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
     { icon: Bell }
   ]
   return (
-    <header className="w-full flex border-b border-border h-[72px]">
+    <header className="w-full sticky top-0 z-50 flex bg-white border-b border-border h-[72px]">
       <div className="flex-1 flex items-center pl-7 pr-4">
         <button onClick={onToggleSidebar} className="w-4 h-4">
           <PanelLeftClose className="w-4 h-4" />
