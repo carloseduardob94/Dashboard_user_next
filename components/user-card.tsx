@@ -1,0 +1,80 @@
+import { Button } from "@/components/ui/button";
+import { Clock3, EllipsisVertical, Tag, User } from "lucide-react";
+
+interface UserCardProps {
+  name: string;
+  age: number;
+  gender: string;
+  date: string;        // Ex: "22/03/2025"
+  time: string;        // Ex: "10:21am"
+  duration: string;    // Ex: "38m22s"
+  userType: string;    // Ex: "Usuário padrão"
+  status: string;
+}
+
+export default function UserCard({
+  name,
+  age,
+  gender,
+  date,
+  time,
+  duration,
+  userType,
+  status = "Ativo",
+}: UserCardProps) {
+  const initials = (() => {
+    const parts = name.trim().split(" ");
+    const first = parts[0]?.[0] || "";
+    const last = parts[parts.length - 1]?.[0] || "";
+    return (first + last).toUpperCase();
+  })();
+
+  return (
+    <div className="flex items-center justify-between px-4 py-3 bg-white border rounded-lg">
+      <div className="flex items-center gap-3">
+        {/* Iniciais */}
+        <div className="w-14 h-14 rounded-full bg-muted flex items-center justify-center text-base font-medium text-primary">
+          {initials}
+        </div>
+
+        <div className="flex flex-col">
+          <div className="flex gap-3 mb-2">
+            <p className="text-sm font-medium">{name}</p>
+            <p className="flex items-center gap-1 text-xs text-muted-foreground">
+              <User className="w-3 h-3" />
+              {age} anos, {gender}
+            </p>
+          </div>
+          <p className="text-xs text-muted-foreground flex items-center gap-3">
+            <span>{date} -</span>
+            <span>{time} </span>
+            <div className="flex items-center gap-1">
+              <Clock3 className="w-3 h-3" />
+              <span>{duration}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <Tag className="w-3 h-3" />
+              <span className="text-xs text-muted-foreground">{userType}</span>
+            </div>
+          </p>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-3">
+        <Button
+          variant="outline"
+          className={`h-5 px-3 text-xs font-semibold rounded-xl ${status === "Ativo"
+            ? "text-secondary-foreground bg-secondary border-0"
+            : "text-muted-foreground border"
+            }`}
+        >
+          {status}
+        </Button>
+
+        <Button variant="ghost" className="rounded-full p-3">
+          <EllipsisVertical />
+        </Button>
+      </div>
+    </div>
+  );
+}
