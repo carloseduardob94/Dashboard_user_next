@@ -9,18 +9,33 @@ import UserStatCard from "@/components/user-stat-card";
 import { users } from "@/data/users";
 import { paginationItems } from "@/lib/utils";
 import { ListFilter, Plus } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 
 export default function UserPage() {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedTerm, setDebouncedTerm] = useState("");
+
   const [page, setPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(10)
 
-  const totalPages = Math.ceil(users.length / itemsPerPage)
-  const startIndex = (page - 1) * itemsPerPage
-  const currentUsers = users.slice(startIndex, startIndex + itemsPerPage)
+  // remove os sinais de acento → "João" → "Joao"
+  const normalized = (str: string) => str.toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
-  console.log(currentUsers)
+  const filteredUsers = users.filter((user) => {
+    const term = normalized(debouncedTerm);
+
+    return (
+      normalized(user.name).includes(term) ||
+      normalized(user.age.toString()).includes(term) ||
+      normalized(user.gender).includes(term) ||
+      normalized(user.status) === (term)
+    );
+  });
+
+  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage)
+  const startIndex = (page - 1) * itemsPerPage
+  const currentUsers = filteredUsers.slice(startIndex, startIndex + itemsPerPage)
 
   const getPaginationItems: Array<number | string> = paginationItems(page, totalPages)
 
@@ -30,6 +45,15 @@ export default function UserPage() {
     { title: "Ativos", value: "203" },
     { title: "Inativos", value: "127" },
   ]
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setDebouncedTerm(searchTerm);
+      setPage(1); // volta para página 1 quando buscar
+    }, 500); // 500ms segundos de atraso
+
+    return () => clearTimeout(timeout); // limpa o timeout anterior
+  }, [searchTerm]);
 
   return (
     <div className="w-full font-inter p-10">
@@ -48,10 +72,28 @@ export default function UserPage() {
         </div>
 
         {/* Campo de busca e filtro */}
-        <div className="w-full flex items-center gap-2">
-          <Input placeholder="Buscar..." className="w-full" />
-          <Button variant="outline" className="rounded-full" size="icon"><ListFilter /></Button>
-        </div>
+        <form
+          className="w-full flex items-center gap-2"
+          onSubmit={(e) => {
+            e.preventDefault();
+            setPage(1); // volta pra página 1 após novo filtro
+          }}
+        >
+          <Input
+            placeholder="Buscar por nome, idade, gênero ou status..."
+            className="flex-1"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <Button
+            type="submit"
+            variant="outline"
+            className="rounded-full"
+            size="icon"
+          >
+            <ListFilter />
+          </Button>
+        </form>
 
         {/* Lista de usuários */}
         <div className="flex flex-col gap-2 overflow-y-auto">
@@ -75,7 +117,6 @@ export default function UserPage() {
           <span>{startIndex + 1} - {startIndex + currentUsers.length} de {users.length} usuários</span>
           <div className="flex items-center gap-4">
             {/* <Pagination /> */}
-            {/* <SelectItensPerPage /> */}
 
             <Pagination>
               <PaginationContent className="gap-1">
@@ -111,6 +152,7 @@ export default function UserPage() {
             </Pagination>
           </div>
 
+          {/* <SelectItensPerPage /> */}
           <div className="flex items-center gap-2 text-sm">
             <span>Itens por página</span>
             <Select
