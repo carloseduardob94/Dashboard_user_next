@@ -1,5 +1,6 @@
 "use client";
 
+import { AddUserForm } from "@/components/add-user-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
@@ -61,7 +62,8 @@ export default function UserPage() {
       <div className="container flex flex-col w-full space-y-5">
         <div className="flex items-center justify-between">
           <h1 className="text-3xl font-noto text-foreground">Usuários</h1>
-          <Button className="w-28 h-10 rounded-full font-normal"><Plus className="w-4 h-4" /> Adicionar</Button>
+          {/* <Button className="w-28 h-10 rounded-full font-normal"><Plus className="w-4 h-4" /> Adicionar</Button> */}
+          <AddUserForm />
         </div>
 
         {/* Cards de info (Usuários, Tempo, Ativos, Inativos) */}

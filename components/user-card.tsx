@@ -63,7 +63,7 @@ export default function UserCard({
       <div className="flex items-center gap-3">
         <Button
           variant="outline"
-          className={`h-5 px-3 text-xs font-semibold rounded-xl ${status === "Ativo"
+          className={`h-5 px-3 text-xs font-semibold rounded-xl cursor-default ${status === "Ativo"
             ? "text-secondary-foreground bg-secondary border-0"
             : "text-muted-foreground border"
             }`}
