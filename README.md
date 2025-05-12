@@ -50,7 +50,7 @@ Este projeto é parte de um desafio técnico que exigia:
 
 ## 🔗 Deploy
 
-🔗 [Clique aqui para acessar o projeto na Vercel](https://seu-link.vercel.app)
+🔗 [Clique aqui para acessar o projeto na Vercel](https://dashboard-user-next-5og0z7dlx-carloseduardob94s-projects.vercel.app/)
 
 ---
 
