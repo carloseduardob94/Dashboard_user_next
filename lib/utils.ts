@@ -3,7 +3,7 @@ import { twMerge } from "tailwind-merge"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
-}
+};
 
 export const paginationItems = (
   current: number,
@@ -45,8 +45,12 @@ export const paginationItems = (
 
 export const getRandomAge = () => Math.floor(Math.random() * (60 - 18 + 1)) + 18;
 
-export const inferGender = (name: string) =>
-  name.toLowerCase().endsWith("a") ? "Mulher" : "Homem";
+export const inferGender = (fullName: string) => {
+  const firstName = fullName.trim().split(" ")[0].toLowerCase();
+
+  if (firstName.endsWith("a") || firstName.endsWith("e")) return "Mulher";
+  return "Homem";
+};
 
 export const getCurrentDate = () => {
   const now = new Date();

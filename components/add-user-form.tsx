@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Dialog, DialogClose, DialogContent, DialogTitle, DialogTrigger } from "./ui/dialog"
 import { Button } from "./ui/button"
 import { Label } from "./ui/label"
@@ -8,11 +8,18 @@ import { Input } from "./ui/input"
 import { Checkbox } from "./ui/checkbox"
 import { Switch } from "./ui/switch"
 import { Plus, X } from "lucide-react"
-import { useUsersFirebase } from "@/hooks/useUsersFirebase"
+import { User, useUsersFirebase } from "@/hooks/useUsersFirebase"
 import { getCurrentDate, getCurrentTime, getRandomAge, getRandomDuration, inferGender } from "@/lib/utils"
+import { useToast } from "@/hooks/use-toast"
 
-export function AddUserForm() {
-  const [isOpen, setIsOpen] = useState(false)
+interface AddUserFormProps {
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
+  user: User | null;
+}
+
+export function AddUserForm({ isOpen, onOpenChange, user }: AddUserFormProps) {
+  const { toast } = useToast()
 
   const [formData, setFormData] = useState({
     name: "",
@@ -25,59 +32,94 @@ export function AddUserForm() {
     status: true
   })
 
-  const { addUser } = useUsersFirebase()
+  const { addUser, updateUser } = useUsersFirebase()
 
   const handleChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }))
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     const userToSave = {
       name: formData.name.trim(),
       email: formData.email.trim(),
       phone: formData.phone.trim(),
       whatsapp: formData.whatsapp,
-      cpf: formData.cpf.replace(/\D/g, ""), // apenas números
+      cpf: formData.cpf.replace(/\D/g, ""),
       rg: formData.rg.trim(),
       email2: formData.email2.trim(),
       status: formData.status ? "Ativo" : "Inativo"
+    };
+
+    if (user?.id) {
+      await updateUser(user.id, {
+        ...user,
+        ...userToSave,
+      });
+      toast({
+        title: "USUÁRIO ATUALIZADO",
+        description: "Usuário atualizado com sucesso."
+      })
+    } else {
+      await addUser({
+        ...userToSave,
+        age: getRandomAge(),
+        gender: inferGender(formData.name),
+        date: getCurrentDate(),
+        time: getCurrentTime(),
+        duration: getRandomDuration(),
+        userType: "Usuário padrão",
+      });
+      toast({
+        title: "USUÁRIO ADICIONADO",
+        description: "Usuário adicionado com sucesso."
+      })
     }
 
-    await addUser({
-      ...userToSave,
-      age: getRandomAge(),
-      gender: inferGender(formData.name),
-      date: getCurrentDate(),
-      time: getCurrentTime(),
-      duration: getRandomDuration(),
-      userType: "Usuário padrão",
-    })
-    setIsOpen(false)
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      whatsapp: false,
-      cpf: "",
-      rg: "",
-      email2: "",
-      status: true
-    })
-  }
+    onOpenChange(false);
+  };
+
+  useEffect(() => {
+    const isEditing = !!user;
+    if (!isOpen) return;
+
+    if (isEditing) {
+      setFormData({
+        name: user.name,
+        email: user.email ?? "",
+        phone: user.phone ?? "",
+        whatsapp: user.whatsapp ?? false,
+        cpf: user.cpf ?? "",
+        rg: user.rg ?? "",
+        email2: user.email2 ?? "",
+        status: user.status === "Ativo"
+      });
+    } else {
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        whatsapp: false,
+        cpf: "",
+        rg: "",
+        email2: "",
+        status: true
+      });
+    }
+  }, [Boolean(user), isOpen]);
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+      {/* <DialogTrigger asChild>
         <Button className="w-28 h-10 rounded-full font-normal">
           <Plus className="w-4 h-4 mr-1" /> Adicionar
         </Button>
-      </DialogTrigger>
+      </DialogTrigger> */}
 
       <DialogContent className="fixed inset-y-0 right-0 h-full w-full max-w-[40%] rounded-none border-l bg-white shadow-lg animate-in slide-in-from-right z-50 overflow-y-auto">
         <div className="flex justify-between items-center p-6">
-          <DialogTitle className="text-2xl font-normal font-noto">Adicionar usuário</DialogTitle>
+          <DialogTitle className="text-2xl font-normal font-noto">{user ? "Editar usuário" : "Adicionar usuário"}</DialogTitle>
           <DialogClose asChild>
             <Button variant="outline" className="rounded-full" size="icon">
               <X className="w-5 h-5" />
@@ -153,7 +195,7 @@ export function AddUserForm() {
             <DialogClose asChild>
               <Button className="rounded-full" variant="outline">Cancelar</Button>
             </DialogClose>
-            <Button className="rounded-full" type="submit">Adicionar</Button>
+            <Button className="rounded-full" type="submit">{user ? "Salvar alterações" : "Adicionar"}</Button>
           </div>
         </form>
       </DialogContent>

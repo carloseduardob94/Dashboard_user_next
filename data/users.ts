@@ -1,4 +1,5 @@
-export const users = [
+// Não está sendo mais usado. Tudo está no DB FIREBASE
+export const mockUsers = [
   {
     name: "José Ricardo Gomes",
     age: 51,

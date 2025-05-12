@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import {
   collection,
-  getDocs,
   addDoc,
   updateDoc,
   deleteDoc,
@@ -22,6 +21,12 @@ export interface User {
   duration: string;
   userType: string;
   status: string;
+  email: string;
+  phone: string;
+  whatsapp: boolean;
+  cpf: string;
+  rg: string;
+  email2: string;
 }
 
 export function useUsersFirebase() {

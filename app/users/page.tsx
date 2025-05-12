@@ -7,16 +7,20 @@ import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, Pagi
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import UserCard from "@/components/user-card";
 import UserStatCard from "@/components/user-stat-card";
-import { useUsersFirebase } from "@/hooks/useUsersFirebase";
+import { useToast } from "@/hooks/use-toast";
+import { User, useUsersFirebase } from "@/hooks/useUsersFirebase";
 import { paginationItems } from "@/lib/utils";
-import { ListFilter, Plus } from "lucide-react";
+import { ListFilter } from "lucide-react";
 import { useEffect, useState } from "react";
 
 
 export default function UserPage() {
-  const { users, addUser, updateUser, deleteUser } = useUsersFirebase();
+  const { users, deleteUser } = useUsersFirebase();
+  const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedTerm, setDebouncedTerm] = useState("");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [userToEdit, setUserToEdit] = useState<User | null>(null);
 
   const [page, setPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(10)
@@ -41,6 +45,21 @@ export default function UserPage() {
 
   const getPaginationItems: Array<number | string> = paginationItems(page, totalPages)
 
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteUser(id);
+      toast({
+        title: "USUÁRIO DELETADO",
+        description: "Usuário deletado com sucesso!",
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        description: "Erro ao deletar usuário.",
+      });
+    }
+  }
+
 
   const userStats = [
     { title: "Usuários", value: "294" },
@@ -64,8 +83,23 @@ export default function UserPage() {
       <div className="container flex flex-col w-full space-y-5">
         <div className="flex items-center justify-between">
           <h1 className="text-3xl font-noto text-foreground">Usuários</h1>
-          {/* <Button className="w-28 h-10 rounded-full font-normal"><Plus className="w-4 h-4" /> Adicionar</Button> */}
-          <AddUserForm />
+          <div className="flex items-center gap-3">
+            <Button
+              className="w-28 h-10 rounded-full font-normal"
+              onClick={() => {
+                setUserToEdit(null); // limpa estado para criação
+                setIsDialogOpen(true); // abre o modal
+              }}
+            >
+              + Adicionar
+            </Button>
+
+            <AddUserForm
+              isOpen={isDialogOpen}
+              onOpenChange={setIsDialogOpen}
+              user={userToEdit}
+            />
+          </div>
         </div>
 
         {/* Cards de info (Usuários, Tempo, Ativos, Inativos) */}
@@ -113,6 +147,11 @@ export default function UserPage() {
                 gender={item.gender}
                 userType={item.userType}
                 status={item.status}
+                onEdit={() => {
+                  setUserToEdit(item);
+                  setIsDialogOpen(true);
+                }}
+                onDelete={() => handleDelete(item.id!)}
               />
             ))
           ) : (
@@ -123,7 +162,6 @@ export default function UserPage() {
           )}
         </div>
 
-        {/* Rodapé: paginação */}
         <div className="flex items-center justify-between text-sm text-muted-foreground">
           <span>{startIndex + 1} - {startIndex + currentUsers.length} de {users.length} usuários</span>
           <div className="flex items-center gap-4">
@@ -177,7 +215,7 @@ export default function UserPage() {
                 <SelectValue placeholder="Itens" />
               </SelectTrigger>
               <SelectContent>
-                {[10, 15, 20].map((num) => (
+                {[5, 10, 15, 20].map((num) => (
                   <SelectItem key={num} value={String(num)}>
                     {num}
                   </SelectItem>
