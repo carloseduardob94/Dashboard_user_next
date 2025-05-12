@@ -7,13 +7,14 @@ import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, Pagi
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import UserCard from "@/components/user-card";
 import UserStatCard from "@/components/user-stat-card";
-import { users } from "@/data/users";
+import { useUsersFirebase } from "@/hooks/useUsersFirebase";
 import { paginationItems } from "@/lib/utils";
 import { ListFilter, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 
 
 export default function UserPage() {
+  const { users, addUser, updateUser, deleteUser } = useUsersFirebase();
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedTerm, setDebouncedTerm] = useState("");
 
@@ -39,6 +40,7 @@ export default function UserPage() {
   const currentUsers = filteredUsers.slice(startIndex, startIndex + itemsPerPage)
 
   const getPaginationItems: Array<number | string> = paginationItems(page, totalPages)
+
 
   const userStats = [
     { title: "Usuários", value: "294" },

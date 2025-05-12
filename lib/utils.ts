@@ -42,3 +42,24 @@ export const paginationItems = (
 
   return pages;
 };
+
+export const getRandomAge = () => Math.floor(Math.random() * (60 - 18 + 1)) + 18;
+
+export const inferGender = (name: string) =>
+  name.toLowerCase().endsWith("a") ? "Mulher" : "Homem";
+
+export const getCurrentDate = () => {
+  const now = new Date();
+  return now.toLocaleDateString("pt-BR");
+};
+
+export const getCurrentTime = () => {
+  const now = new Date();
+  return now.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+};
+
+export const getRandomDuration = () => {
+  const minutes = Math.floor(Math.random() * 50) + 10;
+  const seconds = Math.floor(Math.random() * 60);
+  return `${minutes}m${seconds}s`;
+};
