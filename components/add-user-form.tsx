@@ -7,7 +7,7 @@ import { Label } from "./ui/label"
 import { Input } from "./ui/input"
 import { Checkbox } from "./ui/checkbox"
 import { Switch } from "./ui/switch"
-import { Plus } from "lucide-react"
+import { Plus, X } from "lucide-react"
 import { useUsersFirebase } from "@/hooks/useUsersFirebase"
 import { getCurrentDate, getCurrentTime, getRandomAge, getRandomDuration, inferGender } from "@/lib/utils"
 
@@ -76,11 +76,16 @@ export function AddUserForm() {
       </DialogTrigger>
 
       <DialogContent className="fixed inset-y-0 right-0 h-full w-full max-w-[40%] rounded-none border-l bg-white shadow-lg animate-in slide-in-from-right z-50 overflow-y-auto">
-        <div className="flex justify-between items-center p-6 border-b">
-          <DialogTitle className="text-lg font-noto">Adicionar usuário</DialogTitle>
+        <div className="flex justify-between items-center p-6">
+          <DialogTitle className="text-2xl font-normal font-noto">Adicionar usuário</DialogTitle>
+          <DialogClose asChild>
+            <Button variant="outline" className="rounded-full" size="icon">
+              <X className="w-5 h-5" />
+            </Button>
+          </DialogClose>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5 px-6 pb-6">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-5 px-6 pb-6">
           <div className="space-y-2">
             <Label htmlFor="name">Nome completo</Label>
             <Input id="name" value={formData.name} onChange={e => handleChange("name", e.target.value)} required />
@@ -94,16 +99,16 @@ export function AddUserForm() {
           <div className="space-y-2">
             <Label htmlFor="phone">Telefone</Label>
             <Input id="phone" value={formData.phone} onChange={e => handleChange("phone", e.target.value)} />
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="whatsapp"
+                checked={formData.whatsapp}
+                onCheckedChange={() => handleChange("whatsapp", !formData.whatsapp)}
+              />
+              <Label htmlFor="whatsapp">WhatsApp</Label>
+            </div>
           </div>
 
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="whatsapp"
-              checked={formData.whatsapp}
-              onCheckedChange={() => handleChange("whatsapp", !formData.whatsapp)}
-            />
-            <Label htmlFor="whatsapp">WhatsApp</Label>
-          </div>
 
           <div className="flex gap-4">
             <div className="space-y-2 w-full">
@@ -127,26 +132,28 @@ export function AddUserForm() {
             <Input id="email2" value={formData.email2} onChange={e => handleChange("email2", e.target.value)} />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="status">Status</Label>
-            <div className="flex items-center justify-between border rounded-lg px-4 py-3">
+
+          <div className="flex items-center justify-between border rounded-lg p-4 bg-primary-foreground mt-2">
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="status">Status</Label>
               <span className="text-sm text-muted-foreground">Defina se o usuário estará ativo ao ser adicionado.</span>
-              <div className="flex items-center gap-2">
-                <Switch
-                  id="status"
-                  checked={formData.status}
-                  onCheckedChange={() => handleChange("status", !formData.status)}
-                />
-                <span className="text-sm">{formData.status ? "Ativo" : "Inativo"}</span>
-              </div>
+
+            </div>
+            <div className="flex items-center gap-2">
+              <Switch
+                id="status"
+                checked={formData.status}
+                onCheckedChange={() => handleChange("status", !formData.status)}
+              />
+              <span className="text-sm font-medium">{formData.status ? "Ativo" : "Inativo"}</span>
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 pt-4">
+          <div className="flex justify-end gap-3 mt-auto">
             <DialogClose asChild>
-              <Button variant="outline">Cancelar</Button>
+              <Button className="rounded-full" variant="outline">Cancelar</Button>
             </DialogClose>
-            <Button type="submit">Adicionar</Button>
+            <Button className="rounded-full" type="submit">Adicionar</Button>
           </div>
         </form>
       </DialogContent>

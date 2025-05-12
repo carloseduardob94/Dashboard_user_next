@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { Clock3, EllipsisVertical, Tag, User } from "lucide-react";
+import { Clock3, EllipsisVertical, Pencil, Tag, Trash2, User } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 
 interface UserCardProps {
   name: string;
@@ -10,6 +11,8 @@ interface UserCardProps {
   duration: string;
   userType: string;
   status: string;
+  onEdit?: () => void;
+  onDelete?: () => void;
 }
 
 export default function UserCard({
@@ -21,6 +24,8 @@ export default function UserCard({
   duration,
   userType,
   status = "Ativo",
+  onEdit,
+  onDelete,
 }: UserCardProps) {
   const initials = (() => {
     const parts = name.trim().split(" ");
@@ -71,9 +76,23 @@ export default function UserCard({
           {status}
         </Button>
 
-        <Button variant="ghost" className="rounded-full p-3">
-          <EllipsisVertical />
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="rounded-full p-3">
+              <EllipsisVertical className="w-4 h-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={onEdit} className="cursor-pointer">
+              <Pencil className="w-4 h-4 mr-2" />
+              Editar
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={onDelete} className="cursor-pointer text-red-600">
+              <Trash2 className="w-4 h-4 mr-2" />
+              Deletar
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
   );

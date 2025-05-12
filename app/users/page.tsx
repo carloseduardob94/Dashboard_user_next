@@ -100,20 +100,27 @@ export default function UserPage() {
         </form>
 
         {/* Lista de usuários */}
-        <div className="flex flex-col gap-2 overflow-y-auto">
-          {currentUsers.map((item, index) => (
-            <UserCard
-              key={index}
-              name={item.name}
-              age={item.age}
-              date={item.date}
-              time={item.time}
-              duration={item.duration}
-              gender={item.gender}
-              userType={item.userType}
-              status={item.status}
-            />
-          ))}
+        <div className="flex flex-col gap-2 min-h-screen overflow-y-auto">
+          {currentUsers.length > 0 ? (
+            currentUsers.map((item, index) => (
+              <UserCard
+                key={index}
+                name={item.name}
+                age={item.age}
+                date={item.date}
+                time={item.time}
+                duration={item.duration}
+                gender={item.gender}
+                userType={item.userType}
+                status={item.status}
+              />
+            ))
+          ) : (
+            <div className="flex flex-col items-center justify-center text-center py-20 text-muted-foreground">
+              <span className="text-xl font-semibold">Nenhum usuário encontrado</span>
+              <span className="text-sm mt-2">Tente adicionar um novo ou ajustar os filtros.</span>
+            </div>
+          )}
         </div>
 
         {/* Rodapé: paginação */}
